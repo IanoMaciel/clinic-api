@@ -102,7 +102,7 @@ class CustomerController extends Controller {
      * Remove the specified resource from storage.
      *
      * @param Integer $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
     {
