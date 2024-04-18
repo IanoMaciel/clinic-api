@@ -5,81 +5,114 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 
-class CustomerController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+class CustomerController extends Controller {
+    protected $customer;
+
+    public function __construct(Customer $customer) {
+        $this->customer = $customer;
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
-    {
-        //
+    public function index(Request $request) {
+        $query = $this->customer->query(); // Inicializa a consulta
+
+        if ($request->has('search')) {
+            $search = $request->get('search');
+            $query->where('full_name', 'like', '%' . $search . '%');
+        }
+
+        if ($request->has('attributes')) {
+            $attributes = $request->get('attributes');
+            $query->selectRaw($attributes);
+        }
+
+        // Obtém os resultados paginados
+        $customers = $query->orderBy('full_name')->paginate(10);
+
+        // Retorna os resultados em formato JSON
+        return response()->json($customers, 200);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(Request $request) {
+        $request->validate($this->customer->rules());
+        $customer = $this->customer->create($request->all());
+        return response()->json($customer, 201);
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
+     * @param Integer $id
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
-    public function show(Customer $customer)
-    {
-        //
-    }
+    public function show($id) {
+        $customer = $this->customer->find($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Customer $customer)
-    {
-        //
+        if ($customer === null)
+            return response()->json(['message' => 'Customer not found'], 404);
+
+        return response()->json($customer, 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
+     * @param Integer $id
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Customer $customer)
-    {
-        //
+    public function update(Request $request, $id) {
+        $customer = $this->customer->find($id);
+        $cpf = $request->get('cpf');
+        $email = $request->get('email');
+
+        if ($customer === null)  {
+            return response()->json(['message' => 'Customer not found'], 404);
+        }
+
+        // verifica se o CPF fornecido já existe para outro cliente no banco de dados
+        $cpfExists = $this->customer->where('cpf', $cpf)->where('id', '<>', $id)->exists();
+
+        if ($cpfExists) {
+            return response()->json(['message' => 'There is already a customer with this CPF number'], 400);
+        }
+
+        // verifica se o email fornecido já eixste para outro cliente no banco de dados
+        $emailExists = $this->customer->where('email', $email)->where('id', '<>', $id)->exists();
+
+        if ($emailExists) {
+            return response()->json(['message' => 'There is already a customer with this address email'], 400);
+        }
+
+        $customer->update($request->all());
+        return response()->json($customer, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Customer  $customer
+     * @param Integer $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Customer $customer)
+    public function destroy($id)
     {
-        //
+        $customer = $this->customer->find($id);
+
+        if ($customer === null) {
+            return response()->json(['message' => 'Customer not found'], 404);
+        }
+
+        $customer->delete();
+        return response()->json(['message' => 'Customer deleted'], 200);
     }
 }
