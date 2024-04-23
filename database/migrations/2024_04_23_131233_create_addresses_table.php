@@ -15,7 +15,7 @@ class CreateAddressesTable extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('customer_id');
             $table->string('cep');
             $table->string('uf');
             $table->string('city');
@@ -25,6 +25,7 @@ class CreateAddressesTable extends Migration
             $table->string('complement');
             $table->string('reference');
             $table->timestamps();
+
         });
     }
 
