@@ -20,8 +20,7 @@ class Customer extends Model {
     public function rules() {
         return [
             'full_name' => 'required|string|min:3|max:100',
-            'cpf' => 'required',
-//            'cpf' => 'required|cpf',
+            'cpf' => 'required|cpf',
             'birth_date' => 'required|date|before_or_equal:today',
             'phone_primary' => 'required|string|regex:/^\d{10,11}$/',
             'phone_secondary' => 'string|regex:/^\d{10,11}$/',
