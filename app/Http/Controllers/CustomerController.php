@@ -19,7 +19,7 @@ class CustomerController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request) {
-        $query = $this->customer->query(); // Inicializa a consulta
+        $query = $this->customer->query()->with('address'); // Inicializa a consulta
 
         if ($request->has('search')) {
             $search = $request->get('search');

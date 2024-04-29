@@ -34,4 +34,9 @@ class Address extends Model
             'reference' => 'nullable|string',
         ];
     }
+
+    // relationship -> belongsTo
+    public function customer() {
+        return $this->belongsTo('App\Models\Customer');
+    }
 }

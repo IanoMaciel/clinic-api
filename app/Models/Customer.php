@@ -27,4 +27,10 @@ class Customer extends Model {
             'email' => 'required|email|unique:customers,email'
         ];
     }
+
+    // relationship -> hasMany with address
+    public function address() {
+        return $this->hasMany('App\Models\Address');
+    }
+
 }
