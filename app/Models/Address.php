@@ -24,7 +24,7 @@ class Address extends Model
     public function rules() {
         return [
             'customer_id' => 'required:customers,id',
-            'cep' => 'required|string|format_cep',
+            'cep' => 'required|string|formato_cep',
             'uf' => 'required|string|uf',
             'city' => 'required|string',
             'street' => 'required|string',

@@ -113,6 +113,6 @@ class CustomerController extends Controller {
         }
 
         $customer->delete();
-        return response()->json(['message' => 'Customer deleted'], 200);
+        return response()->json(null, 204);
     }
 }
