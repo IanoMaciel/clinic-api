@@ -21,3 +21,4 @@ Route::apiResource('customer', 'CustomerController');
 Route::apiResource('address', 'AddressController');
 Route::apiResource('local', 'LocalController');
 Route::apiResource('service', 'ServiceController');
+Route::apiResource('product', 'ProductController');
