@@ -43,12 +43,13 @@ class ProductController extends Controller {
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Product  $product
+     * @param Integer $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
-    {
-        //
+    public function show($id): \Illuminate\Http\JsonResponse {
+        $product = $this->product->find($id);
+        if (!$product) abort(404, 'Product not found');
+        return response()->json($product, 200);
     }
 
     /**
