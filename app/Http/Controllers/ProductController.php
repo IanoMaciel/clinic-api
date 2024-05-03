@@ -53,26 +53,20 @@ class ProductController extends Controller {
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Product $product)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
+     * @param Integer $id
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
-    {
-        //
+    public function update(Request $request, $id): \Illuminate\Http\JsonResponse {
+        $product = $this->product->find($id);
+        if (!$product) abort(404, 'Product not found');
+
+        $request->validate($this->product->rules());
+        $product->update($request->all());
+
+        return response()->json($product, 200);
     }
 
     /**
