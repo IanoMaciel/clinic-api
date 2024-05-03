@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Ramsey\Uuid\Type\Integer;
 
 class ProductController extends Controller {
     protected $product;
@@ -72,11 +73,13 @@ class ProductController extends Controller {
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Product  $product
+     * @param  Integer $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
-    {
-        //
+    public function destroy($id) {
+        $product = $this->product->find($id);
+        if (!$product) abort(404, 'Product not found');
+        $product->delete();
+        return response()->json(null, 204);
     }
 }
