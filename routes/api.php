@@ -22,3 +22,9 @@ Route::apiResource('address', 'AddressController');
 Route::apiResource('local', 'LocalController');
 Route::apiResource('service', 'ServiceController');
 Route::apiResource('product', 'ProductController');
+
+
+Route::post('login', 'AuthController@login');
+Route::post('logout', 'AuthController@logout');
+Route::post('refresh', 'AuthController@refresh');
+Route::post('me', 'AuthController@me');
