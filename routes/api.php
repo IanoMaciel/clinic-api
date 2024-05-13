@@ -17,14 +17,28 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::apiResource('customer', 'CustomerController');
-Route::apiResource('address', 'AddressController');
+
+//Route::middleware('jwt.auth')->group(function () {
+//    Route::apiResource('customer', 'CustomerController');
+//    Route::apiResource('address', 'AddressController');
+//    Route::apiResource('product', 'ProductController');
+//});
+
+Route::prefix('v1')->middleware('jwt.auth')->group(function () {
+    Route::apiResource('customer', 'CustomerController');
+    Route::apiResource('address', 'AddressController');
+    Route::apiResource('product', 'ProductController');
+
+
+    Route::post('me', 'AuthController@me');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::post('logout', 'AuthController@logout');
+});
+
 Route::apiResource('local', 'LocalController');
 Route::apiResource('service', 'ServiceController');
-Route::apiResource('product', 'ProductController');
 
 
 Route::post('login', 'AuthController@login');
-Route::post('logout', 'AuthController@logout');
-Route::post('refresh', 'AuthController@refresh');
-Route::post('me', 'AuthController@me');
+
+
