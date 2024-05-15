@@ -33,12 +33,11 @@ Route::prefix('v1')->middleware('jwt.auth')->group(function () {
     Route::post('me', 'AuthController@me');
     Route::post('refresh', 'AuthController@refresh');
     Route::post('logout', 'AuthController@logout');
+    Route::apiResource('local', 'LocalController');
+    Route::apiResource('service', 'ServiceController');
 });
 
-Route::apiResource('local', 'LocalController');
-Route::apiResource('service', 'ServiceController');
-
-
 Route::post('login', 'AuthController@login');
+Route::post('history', 'HistoryController@store');
 
 
