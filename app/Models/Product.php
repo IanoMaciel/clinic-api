@@ -20,7 +20,7 @@ class Product extends Model
 
     public function rules() {
         return [
-            'name' => 'required|string|unique:products,name',
+            'name' => 'required|string',
             'description' => 'nullable|string',
             'local_id' => 'required|exists:locals,id',
             'service_id' => 'required|exists:services,id',
