@@ -16,9 +16,9 @@ class HistoryController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
+    public function index(): \Illuminate\Http\JsonResponse {
+        $histories = $this->history->query()->paginate(10);
+        return response()->json($histories, 200);
     }
 
 
@@ -44,12 +44,13 @@ class HistoryController extends Controller {
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\History  $history
+     * @param Integer $id
      * @return \Illuminate\Http\Response
      */
-    public function show(History $history)
-    {
-        //
+    public function show($id): \Illuminate\Http\JsonResponse {
+        $history = $this->history->query()->find($id);
+        if (!$history) return response()->json(['error' => 'History not found'], 404);
+        return response()->json($history, 200);
     }
 
     /**
