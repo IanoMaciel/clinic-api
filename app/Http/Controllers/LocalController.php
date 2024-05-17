@@ -36,12 +36,14 @@ class LocalController extends Controller {
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Local  $local
+     * @param Integer $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Local $local)
-    {
-        //
+    public function show($id) {
+        $local = $this->local->find($id);
+        if (!$local) return response()->json(['error' => 'Service not found'], 404);
+        return response()->json($local, 200);
+
     }
 
     /**

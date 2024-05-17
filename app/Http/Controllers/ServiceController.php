@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Ramsey\Uuid\Type\Integer;
 
 class ServiceController extends Controller {
     protected $service;
@@ -37,12 +38,13 @@ class ServiceController extends Controller {
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Service  $service
+     * @param  Integer $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Service $service)
-    {
-        //
+    public function show($id): \Illuminate\Http\JsonResponse {
+        $service = $this->service->find($id);
+        if (!$service) return response()->json(['error' => 'Service not found'], 404);
+        return response()->json($service, 200);
     }
 
     /**
