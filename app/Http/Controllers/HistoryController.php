@@ -54,26 +54,29 @@ class HistoryController extends Controller {
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Regra de Negócio: somente ususário admin deverá atualizar
+     * o histórico de paciente
      *
-     * @param  \App\Models\History  $history
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(History $history)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\History  $history
+     * @param Integer $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, History $history)
-    {
-        //
+    public function update(Request $request, $id) {
+        $history = $this->history->query()->find($id);
+
+        if (!$history) return response()->json(['error' => 'History not found', 404]);
+
+        $image = $request->file('history');
+        $image_urn = $image->store('images', 'public');
+
+        $history->update([
+            'customer_id' => $request->get('customer_id'),
+            'history' => $image_urn,
+        ]);
+
+
+//        if (!$history)
     }
 
     /**
