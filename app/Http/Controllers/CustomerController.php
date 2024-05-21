@@ -56,10 +56,9 @@ class CustomerController extends Controller {
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function show($id) {
-        $customer = $this->customer->find($id);
+        $customer = $this->customer->query()->with('address')->find($id);
 
-        if ($customer === null)
-            return response()->json(['message' => 'Customer not found'], 404);
+        if ($customer === null)  return response()->json(['message' => 'Customer not found'], 404);
 
         return response()->json($customer, 200);
     }
