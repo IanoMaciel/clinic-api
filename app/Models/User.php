@@ -18,10 +18,25 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
+        'first_name',
+        'last_name',
+        'is_admin',
+        'is_common',
         'name',
         'email',
         'password',
     ];
+
+    public function rules() {
+        return [
+            'first_name' => 'required|string|max:50',
+            'last_name' => 'required|string|max:100',
+            'is_admin' => 'boolean',
+            'is_common' => 'boolean',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+        ];
+    }
 
     /**
      * The attributes that should be hidden for arrays.
