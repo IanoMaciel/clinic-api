@@ -25,22 +25,26 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 //});
 
 Route::prefix('v1')->middleware('jwt.auth')->group(function () {
-    Route::apiResource('customer', 'CustomerController');
-    Route::apiResource('address', 'AddressController');
 
     Route::post('me', 'AuthController@me');
     Route::post('refresh', 'AuthController@refresh');
     Route::post('logout', 'AuthController@logout');
 
-    Route::apiResource('product', 'ProductController');
-    Route::apiResource('history', 'HistoryController');
+    Route::apiResource('user', 'UserController');
 
     Route::apiResource('local', 'LocalController');
     Route::apiResource('service', 'ServiceController');
+
+    Route::apiResource('customer', 'CustomerController');
+    Route::apiResource('address', 'AddressController');
+    Route::apiResource('product', 'ProductController');
+    Route::apiResource('history', 'HistoryController');
 });
 
 Route::post('login', 'AuthController@login');
-Route::apiResource('history', 'HistoryController');
+
+
+
 
 
 
