@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\History;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class HistoryController extends Controller {
     protected $history;
@@ -67,8 +68,11 @@ class HistoryController extends Controller {
 
         if (!$history) return response()->json(['error' => 'History not found', 404]);
 
+        if ($request->file('history')) Storage::disk('public')->delete($history->get('history'));
+
         $image = $request->file('history');
         $image_urn = $image->store('images', 'public');
+
 
         $history->update([
             'customer_id' => $request->get('customer_id'),
@@ -82,11 +86,20 @@ class HistoryController extends Controller {
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\History  $history
+     * @param \Illuminate\Http\Request $request
+     * @param Integer $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(History $history)
-    {
-        //
+    public function destroy(Request $request, $id): \Illuminate\Http\JsonResponse {
+        $history = $this->history->query()->find($id);
+
+        if (!$history) return response()->json(['error' => 'History not found'], 404);
+
+        if ($request->file('history')) Storage::disk('public')->delete($history->get('history'));
+
+        // remove o arquivo antigo caso um novo arquivo tenha sido enviado no request 
+        $history->delete();
+
+        return response()->json(['message' => 'History successfully removed'], 200);
     }
 }
