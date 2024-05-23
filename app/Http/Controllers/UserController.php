@@ -64,7 +64,7 @@ class UserController extends Controller {
 
         $user = $this->user->query()->find($id);
 
-        dd($id);
+        return response()->json($user, 200);
     }
 
 
@@ -73,20 +73,54 @@ class UserController extends Controller {
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, $id) {
-        //
+        // 1 - verifica se é um usuário admin e se possui autorização
+        $idAdmin = auth()->user();
+        $admin = $idAdmin->getAttribute('is_admin');
+
+        if (!$admin) return response()->json(['error' => 'Unauthorized'], 401);
+
+        // 2 - verifica se existe um id de usuário válido para atualizar
+        $user = $this->user->query()->find($id);
+        if (!$user) return response()->json(['error' => 'User not found', 404]);
+
+        // 3 - inícia o método de atualização de registro do usuário
+        // verifica se o email fornecido já existe para outro user no banco de dados
+        $email = $request->get('email');
+        $emailExists = $this->user->query()->where('email', $email)->where('id', '<>', $id)->exists();
+
+        if ($emailExists) return response()->json(['message' => 'There is already a customer with this address email'], 400);
+
+        // 4 - se tudo deu certo, atualiza o usuário.
+        $user->update($request->all());
+        return response()->json($user, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
-    {
-        //
+    public function destroy($id) {
+        // 1 - verifica se é um usuário admin e se possui autorização
+        $idAdmin = auth()->user();
+        $admin = $idAdmin->getAttribute('is_admin');
+
+        if (!$admin) return response()->json(['error' => 'Unauthorized'], 401);
+
+        // 2 - verifica se existe um id de usuário válido
+        $user = $this->user->query()->find($id);
+        if (!$user) return response()->json(['error' => 'User not found', 404]);
+
+        // 3 - deleta o usuário
+        $user->delete();
+        return response()->json('null', 204);
+    }
+
+    private function isAdmin() {
+
     }
 }
