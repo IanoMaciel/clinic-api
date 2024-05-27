@@ -20,7 +20,7 @@ class CreateCustomersTable extends Migration
             $table->date('birth_date');
             $table->string('phone_primary');
             $table->string('phone_secondary')->nullable();
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
             $table->timestamps();
         });
     }

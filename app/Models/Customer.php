@@ -24,13 +24,28 @@ class Customer extends Model {
             'birth_date' => 'required|date|before_or_equal:today',
             'phone_primary' => 'required|string|celular_com_ddd',
             'phone_secondary' => 'string|celular_com_ddd',
-            'email' => 'required|email|unique:customers,email'
+            'email' => 'email|unique:customers,email'
         ];
     }
 
     // relationship -> hasMany with address
-    public function address() {
+    public function address()
+    {
         return $this->hasMany('App\Models\Address');
+    }
+
+    public function history()
+    {
+        return $this->hasMany('App\Models\History') ;
+    }
+
+    // deleting related addresses and histories
+    protected static function boot(){
+        parent::boot();
+        static::deleting(function ($customer){
+            $customer->address()->delete();
+            $customer->history()->delete();
+        });
     }
 
 }

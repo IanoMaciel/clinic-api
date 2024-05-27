@@ -111,7 +111,13 @@ class CustomerController extends Controller {
             return response()->json(['message' => 'Customer not found'], 404);
         }
 
+//        // deletar os endereços associar se houver
+//        $customer->address()->delete();
+//
+//        // agora deleta o registro do cliente
+//        $customer->delete();
         $customer->delete();
+
         return response()->json(null, 204);
     }
 }
