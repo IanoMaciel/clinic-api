@@ -1,0 +1,207 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Clinic-api",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api": {},
+        "/api/customer": {
+            "get": {
+                "summary": "Lista os clientes cadastrados",
+                "operationId": "36d5a836e102529237aae81bf088183a",
+                "parameters": [
+                    {
+                        "name": "Accept",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "application/json"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Cria novos clientes (pacientes)",
+                "operationId": "e788a12c4fbd7937feab964d2e133089",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "full_name": {
+                                        "description": "Nome completo do cliente",
+                                        "type": "string"
+                                    },
+                                    "cpf": {
+                                        "description": "CPF do cliente",
+                                        "type": "string"
+                                    },
+                                    "birth_date": {
+                                        "description": "Data de nascimento do cliente",
+                                        "type": "string"
+                                    },
+                                    "phone_primary": {
+                                        "description": "Telefone principal do cliente",
+                                        "type": "string"
+                                    },
+                                    "phone_secondary": {
+                                        "description": "Telefone secundário do cliente",
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "email": {
+                                        "description": "Email do cliente",
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "full_name": "Iano de Benedito Maciel",
+                                    "cpf": "999.999.999-00",
+                                    "birth_date": "2000-04-07",
+                                    "phone_primary": "(99) 99999-9999",
+                                    "phone_secondary": "(99) 88888-8888",
+                                    "email": "email@email.com"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "created"
+                    }
+                }
+            }
+        },
+        "/api/customer/{id}": {
+            "get": {
+                "summary": "Mostra os detalhes de um cliente (paciente)",
+                "operationId": "c16111a7a260ae40ab1aff51e82bca5f",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "Cliente não encontrado"
+                    }
+                }
+            },
+            "put": {
+                "summary": "Atualiza um cliente existente",
+                "operationId": "cf7db1cf572012384c283ee4ee9ea0cf",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "full_name": {
+                                        "description": "Nome completo do cliente",
+                                        "type": "string"
+                                    },
+                                    "cpf": {
+                                        "description": "CPF do cliente",
+                                        "type": "string"
+                                    },
+                                    "birth_date": {
+                                        "description": "Data de nascimento do cliente",
+                                        "type": "string"
+                                    },
+                                    "phone_primary": {
+                                        "description": "Telefone principal do cliente",
+                                        "type": "string"
+                                    },
+                                    "phone_secondary": {
+                                        "description": "Telefone secundário do cliente",
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "email": {
+                                        "description": "Email do cliente",
+                                        "type": "string",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "full_name": "Iano de Benedito Maciel",
+                                    "cpf": "999.999.999-00",
+                                    "birth_date": "2000-04-07",
+                                    "phone_primary": "(99) 99999-9999",
+                                    "phone_secondary": "(99) 88888-8888",
+                                    "email": "email@email.com"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "Cliente não encontrado"
+                    },
+                    "400": {
+                        "description": "Já existe um cpf cadastrado no banco de dados"
+                    }
+                }
+            }
+        },
+        "/customer/{id}": {
+            "delete": {
+                "summary": "Remove um cliente",
+                "operationId": "b1185fcbbc2c5457482e6ffff49fe942",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do cliente",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Cliente não encontrado"
+                    }
+                }
+            }
+        }
+    }
+}

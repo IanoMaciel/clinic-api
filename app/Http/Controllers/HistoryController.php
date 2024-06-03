@@ -18,7 +18,7 @@ class HistoryController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index(): \Illuminate\Http\JsonResponse {
-        $histories = $this->history->query()->paginate(10);
+        $histories = $this->history->query()->with('customer')->paginate(10);
         return response()->json($histories, 200);
     }
 
@@ -97,7 +97,7 @@ class HistoryController extends Controller {
 
         if ($request->file('history')) Storage::disk('public')->delete($history->get('history'));
 
-        // remove o arquivo antigo caso um novo arquivo tenha sido enviado no request 
+        // remove o arquivo antigo caso um novo arquivo tenha sido enviado no request
         $history->delete();
 
         return response()->json(['message' => 'History successfully removed'], 200);

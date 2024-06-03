@@ -13,7 +13,20 @@ class CustomerController extends Controller {
     }
 
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/customer",
+     *     summary="Lista os clientes cadastrados",
+     *     @OA\Parameter(
+     *          name="Accept",
+     *          in="header",
+     *          required=true,
+     *          @OA\Schema(type="string", default="application/json")
+     *      ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK"
+     *     )
+     * )
      *
      * @param  \Illuminate\Http\Request
      * @return \Illuminate\Http\JsonResponse
@@ -39,7 +52,32 @@ class CustomerController extends Controller {
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/customer",
+     *     summary="Cria novos clientes (pacientes)",
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(property="full_name", type="string", description="Nome completo do cliente"),
+     *                 @OA\Property(property="cpf", type="string", description="CPF do cliente"),
+     *                 @OA\Property(property="birth_date", type="string", description="Data de nascimento do cliente"),
+     *                 @OA\Property(property="phone_primary", type="string", description="Telefone principal do cliente"),
+     *                 @OA\Property(property="phone_secondary", type="string", description="Telefone secundário do cliente", nullable=true),
+     *                 @OA\Property(property="email", type="string", description="Email do cliente", nullable=true),
+     *                 example={
+     *                     "full_name": "Iano de Benedito Maciel",
+     *                     "cpf": "999.999.999-00",
+     *                     "birth_date": "2000-04-07",
+     *                     "phone_primary": "(99) 99999-9999",
+     *                     "phone_secondary": "(99) 88888-8888",
+     *                     "email": "email@email.com"
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="created")
+     * )
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
@@ -51,7 +89,25 @@ class CustomerController extends Controller {
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *      path="/api/customer/{id}",
+     *      summary="Mostra os detalhes de um cliente (paciente)",
+     *     @OA\Parameter (
+     *         name="id",
+     *         in="path",
+     *         description="ID do cliente",
+     *         required=true,
+     *         @OA\Schema (type="integer")
+     *     ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="OK"
+     *      ),
+     *     @OA\Response (
+     *         response=404,
+     *         description="Cliente não encontrado"
+     *     )
+     *  )
      * @param Integer $id
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
@@ -64,7 +120,50 @@ class CustomerController extends Controller {
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/api/customer/{id}",
+     *     summary="Atualiza um cliente existente",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID do cliente",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(property="full_name", type="string", description="Nome completo do cliente"),
+     *                 @OA\Property(property="cpf", type="string", description="CPF do cliente"),
+     *                 @OA\Property(property="birth_date", type="string", description="Data de nascimento do cliente"),
+     *                 @OA\Property(property="phone_primary", type="string", description="Telefone principal do cliente"),
+     *                 @OA\Property(property="phone_secondary", type="string", description="Telefone secundário do cliente", nullable=true),
+     *                 @OA\Property(property="email", type="string", description="Email do cliente", nullable=true),
+     *                 example={
+     *                     "full_name": "Iano de Benedito Maciel",
+     *                     "cpf": "999.999.999-00",
+     *                     "birth_date": "2000-04-07",
+     *                     "phone_primary": "(99) 99999-9999",
+     *                     "phone_secondary": "(99) 88888-8888",
+     *                     "email": "email@email.com"
+     *                 }
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Cliente não encontrado"
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Já existe um cpf cadastrado no banco de dados"
+     *     )
+     * )
      *
      * @param Integer $id
      * @param  \Illuminate\Http\Request  $request
@@ -98,24 +197,35 @@ class CustomerController extends Controller {
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/customer/{id}",
+     *     summary="Remove um cliente",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID do cliente",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="No Content"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Cliente não encontrado"
+     *     )
+     * )
      *
      * @param Integer $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id)
+    public function destroy ($id)
     {
         $customer = $this->customer->find($id);
 
-        if ($customer === null) {
-            return response()->json(['message' => 'Customer not found'], 404);
-        }
+        if (!$customer) return response()->json(['message' => 'Customer not found'], 404);
 
-//        // deletar os endereços associar se houver
-//        $customer->address()->delete();
-//
-//        // agora deleta o registro do cliente
-//        $customer->delete();
         $customer->delete();
 
         return response()->json(null, 204);
