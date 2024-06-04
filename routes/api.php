@@ -39,13 +39,7 @@ Route::prefix('v1')->middleware('jwt.auth')->group(function () {
     Route::apiResource('address', 'AddressController');
     Route::apiResource('product', 'ProductController');
     Route::apiResource('history', 'HistoryController');
+    Route::apiResource('schedule', 'ScheduleController');
 });
 
 Route::post('login', 'AuthController@login');
-
-
-
-
-
-
-
