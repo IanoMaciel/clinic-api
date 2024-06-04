@@ -15,14 +15,13 @@ class CreateSchedulingsTable extends Migration
     {
         Schema::create('schedulings', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->nullable();
-            $table->string('');
+            $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
+            $table->foreignId('service_id')->constrained('services')->onDelete('cascade');
+            $table->foreignId('local_id')->constrained('locals')->onDelete('cascade');
 
-            $table->datetime('date');
+            $table->dateTime('date_time');
+            $table->string('description')->nullable();
 
-            $table->foreignId('customer_id')->references('customers')->on('id');
-            $table->foreignId('service_id')->references('services')->on('id');
-            $table->
             $table->timestamps();
         });
     }
