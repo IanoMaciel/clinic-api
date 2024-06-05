@@ -22,7 +22,7 @@ class Scheduling extends Model
             'customer_id' => 'required|exists:customers,id',
             'service_id' => 'required|exists:services,id',
             'local_id' => 'required|exists:locals,id',
-            'date_time' => 'required|date_format:Y-m-d H:i:s',
+            'date_time' => 'required|date_format:Y-m-d H:i:s|after:now',
             'description' => 'nullable|string'
         ];
     }
