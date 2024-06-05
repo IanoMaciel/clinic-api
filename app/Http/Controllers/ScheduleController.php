@@ -18,10 +18,11 @@ class ScheduleController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function index() {
-
+    public function index () {
+        $schedule = $this->schedule->query()->with('customer')->paginate(10);
+        return response()->json($schedule, 200);
     }
 
     /**

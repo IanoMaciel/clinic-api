@@ -39,6 +39,10 @@ class Customer extends Model {
         return $this->hasMany('App\Models\History') ;
     }
 
+    public function scheduling () {
+        return $this->hasMany('App\Models\Scheduling');
+    }
+
     // deleting related addresses and histories
     protected static function boot(){
         parent::boot();

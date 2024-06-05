@@ -26,4 +26,9 @@ class Scheduling extends Model
             'description' => 'nullable|string'
         ];
     }
+
+    // Add relationship with customer
+    public function customer () {
+        return $this->belongsTo('App\Models\Customer');
+    }
 }
