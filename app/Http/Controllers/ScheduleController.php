@@ -87,22 +87,48 @@ class ScheduleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  integer  $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id) {
-        //
+        // 1. Authentication and Authorization
+        if ($this->isAuthorized()) return response()->json(['error' => 'Unauthorized'], 401);
+
+        // 2. Find schedule
+        $schedule = $this->schedule->query()->with('customer')->find($id);
+
+        // 3. return schedule
+        return response()->json($schedule, 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  Integer  $id
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, $id) {
-        //
+        $schedule = $this->schedule->find($id);
+        // 1. atorização para realizar está ação
+        if ($this->isAuthorized()) return response()->json(['error' => 'Unauthorized'], 401);
+
+        // 2. valida os campos
+        $request->validate($this->schedule->rules());
+
+        // 2. checks if date and time is valid
+        $dateTime = Carbon::parse($request->get('date_time'));
+
+        // verifica se a data e hora estão no passado
+        if ($dateTime->isPast()) return response()->json(['error' => 'Connot schedule in the past'], 400);
+
+        //4. verifica se horário já está ocupado
+        $existingSchedule = $this->schedule->query()->where('date_time', $dateTime)->first();
+        if ($existingSchedule) return response()->json(['error' => 'Time slot already token'], 400);
+
+        $schedule->update($request->all());
+
+        return response()->json($schedule, 201);
     }
 
     /**
@@ -113,5 +139,19 @@ class ScheduleController extends Controller
      */
     public function destroy($id) {
         //
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function isAuthorized(): bool {
+        $authUser = auth()->user();
+        $isAdmin = $authUser->getAttribute('is_admin');
+        $isCommon = $authUser->getAttribute('is_common');
+
+        // if you not user admin and common, it should return 401 (Unauthorized)
+        if (!$isAdmin && !$isCommon) return true;
+        else return false;
     }
 }
