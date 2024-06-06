@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Scheduling;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ScheduleController extends Controller
 {
@@ -20,8 +21,32 @@ class ScheduleController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index () {
-        $schedule = $this->schedule->query()->with('customer')->paginate(10);
+    public function index (Request $request) {
+        $query = $this->schedule->query()->with('customer');
+
+        // get filter parameter
+        $filter = $request->query('filter');
+
+        // apply date filters
+        if ($filter === 'today') {
+            $query->whereDate('date_time', Carbon::today());
+        }
+
+        if ($filter === 'week') {
+            $query->whereBetween('date_time', [
+                Carbon::now()->startOfWeek(),
+                Carbon::now()->endOfWeek()
+            ]);
+        }
+
+        if ($filter === 'month') {
+            $query->whereBetween('date_time', [
+                Carbon::now()->startOfMonth(),
+                Carbon::now()->endOfMonth()
+            ]);
+        }
+
+        $schedule = $query->paginate(10);
         return response()->json($schedule, 200);
     }
 
