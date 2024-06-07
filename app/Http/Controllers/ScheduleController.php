@@ -59,12 +59,9 @@ class ScheduleController extends Controller
      */
     public function store(Request $request) {
         // 1. checks if the user has authorization
-        $authUser = auth()->user();
-        $isAdmin = $authUser->getAttribute('is_admin');
-        $isCommon = $authUser->getAttribute('is_common');
-
-        // if you not user admin and common, it should return 401 (Unauthorized)
-        if (!$isAdmin && !$isCommon) return response()->json(['error' => 'Unauthorized'], 401);
+        if ($this->isAuthorized()) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
         // 3. valida a solicitação está usando as regras definidas no modelo
         $request->validate($this->schedule->rules());
