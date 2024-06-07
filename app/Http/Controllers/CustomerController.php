@@ -36,8 +36,12 @@ class CustomerController extends Controller {
 
         if ($request->has('search')) {
             $search = $request->get('search');
-            $query->where('full_name', 'like', '%' . $search . '%');
+            $query->where(function($q) use ($search) {
+                $q->where('full_name', 'like', '%' . $search . '%')
+                    ->orWhere('cpf', 'like', '%' . $search . '%');
+            });
         }
+
 
         if ($request->has('attributes')) {
             $attributes = $request->get('attributes');
