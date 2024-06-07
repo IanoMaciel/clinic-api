@@ -22,7 +22,7 @@ class History extends Model
     }
 
     public function customer() {
-        return $this->belongsTo('App\Models\Address');
+        return $this->belongsTo('App\Models\Customer');
     }
 
 }
