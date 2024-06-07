@@ -142,10 +142,23 @@ class ScheduleController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy($id) {
-        //
+    public function destroy ($id) {
+        # autorização
+        if ($this->isAuthorized()) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        # procura o id de agendamento e verifica se existe
+        $schedule = $this->schedule->query()->find($id);
+        if (!$schedule) {
+            return response()->json(['error' => 'Schedule not found'], 404);
+        }
+
+        # remove o agendamento específico
+        $schedule->delete();
+        return response()->json(null, 204);
     }
 
 
