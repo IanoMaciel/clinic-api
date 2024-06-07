@@ -43,6 +43,7 @@ class UserController extends Controller {
             'last_name' => $request->get('last_name'),
             'is_admin' => $request->get('is_admin'),
             'is_common' => $request->get('is_common'),
+            'is_esp' => $request->get('is_esp'),
             'email' => $request->get('email'),
             'password' => bcrypt($request->get('password'))
         ]);
