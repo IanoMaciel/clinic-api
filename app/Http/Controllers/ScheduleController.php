@@ -108,26 +108,33 @@ class ScheduleController extends Controller
      * @param  Integer  $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $id) {
-        $schedule = $this->schedule->find($id);
-        // 1. atorização para realizar está ação
-        if ($this->isAuthorized()) return response()->json(['error' => 'Unauthorized'], 401);
+    public function update (Request $request, $id) {
+        if ($this->isAuthorized()) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
-        // 2. valida os campos
+        # procura o id de agendamento e verifica se existe
+        $schedule = $this->schedule->query()->find($id);
+        if (!$schedule) {
+            return response()->json(['error' => 'Schedule not found'], 404);
+        }
+
+        # verifica os campos recebido pelo request body
         $request->validate($this->schedule->rules());
 
-        // 2. checks if date and time is valid
+        # verifica se a data é válida
         $dateTime = Carbon::parse($request->get('date_time'));
+        if ($dateTime->isPast()) {
+            return response()->json(['error' => 'Connot schedule in the past'], 400);
+        }
 
-        // verifica se a data e hora estão no passado
-        if ($dateTime->isPast()) return response()->json(['error' => 'Connot schedule in the past'], 400);
-
-        //4. verifica se horário já está ocupado
+        # verifica se horário já está ocupado
         $existingSchedule = $this->schedule->query()->where('date_time', $dateTime)->first();
-        if ($existingSchedule) return response()->json(['error' => 'Time slot already token'], 400);
+        if ($existingSchedule) {
+            return response()->json(['error' => 'Time slot already token'], 400);
+        }
 
         $schedule->update($request->all());
-
         return response()->json($schedule, 201);
     }
 
