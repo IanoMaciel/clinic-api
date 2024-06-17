@@ -20,7 +20,7 @@ class Scheduling extends Model
     public function rules () {
         return [
             'customer_id' => 'required|exists:customers,id',
-            'service_id' => 'required|exists:services,id',
+            'service_id' => 'required|exists:products,id',
             'local_id' => 'required|exists:locals,id',
             'date_time' => 'required|date_format:Y-m-d H:i:s|after:now',
             'description' => 'nullable|string'
