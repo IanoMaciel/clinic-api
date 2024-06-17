@@ -48,36 +48,31 @@ class ServiceController extends Controller {
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Service  $service
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Service $service)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Service  $service
-     * @return \Illuminate\Http\Response
+     * @param  Integer $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Service $service)
-    {
-        //
+    public function update(Request $request, $id) {
+        $service = $this->service->query()->find($id);
+        if (!$service) return response()->json(['error' => 'Type service not found'], 404);
+
+        $service->update($request->all());
+
+        return response()->json($service, 201);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Service  $service
-     * @return \Illuminate\Http\Response
+     * @param  Integer $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Service $service)
-    {
-        //
+    public function destroy($id) {
+        $service = $this->service->query()->find($id);
+        if (!$service) return response()->json(['error' => 'Local not found'], 404);
+        $service->delete();
+        return response()->json(null, 204);
     }
 }
