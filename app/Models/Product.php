@@ -28,4 +28,8 @@ class Product extends Model
             'value' => 'required|numeric',
         ];
     }
+
+    public function schedule() {
+        return $this->hasOne('App\Models\Scheduling');
+    }
 }

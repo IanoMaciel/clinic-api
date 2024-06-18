@@ -11,8 +11,7 @@ class Scheduling extends Model
 
     protected $fillable = [
         'customer_id',
-        'service_id',
-        'local_id',
+        'product_id',
         'date_time',
         'description'
     ];
@@ -20,8 +19,7 @@ class Scheduling extends Model
     public function rules () {
         return [
             'customer_id' => 'required|exists:customers,id',
-            'service_id' => 'required|exists:products,id',
-            'local_id' => 'required|exists:locals,id',
+            'product_id' => 'required|exists:products,id',
             'date_time' => 'required|date_format:Y-m-d H:i:s|after:now',
             'description' => 'nullable|string'
         ];
@@ -30,5 +28,9 @@ class Scheduling extends Model
     // Add relationship with customer
     public function customer () {
         return $this->belongsTo('App\Models\Customer');
+    }
+
+    public function product () {
+        return $this->belongsTo('App\Models\Product');
     }
 }

@@ -22,7 +22,7 @@ class ScheduleController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function index (Request $request) {
-        $query = $this->schedule->query()->with('customer');
+        $query = $this->schedule->query()->with('customer')->with('product');
 
         // get filter parameter
         $filter = $request->query('filter');
