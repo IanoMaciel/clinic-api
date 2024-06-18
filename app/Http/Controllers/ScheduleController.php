@@ -92,7 +92,7 @@ class ScheduleController extends Controller
         if ($this->isAuthorized()) return response()->json(['error' => 'Unauthorized'], 401);
 
         // 2. Find schedule
-        $schedule = $this->schedule->query()->with('customer')->find($id);
+        $schedule = $this->schedule->query()->with('customer')->with('product')->find($id);
 
         // 3. return schedule
         return response()->json($schedule, 200);
