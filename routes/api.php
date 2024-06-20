@@ -40,6 +40,8 @@ Route::prefix('v1')->middleware('jwt.auth')->group(function () {
     Route::apiResource('product', 'ProductController');
     Route::apiResource('history', 'HistoryController');
     Route::apiResource('schedule', 'ScheduleController');
+
+    Route::apiResource('payment-method', 'PaymentController');
 });
 
 Route::post('login', 'AuthController@login');
