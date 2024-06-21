@@ -42,6 +42,7 @@ Route::prefix('v1')->middleware('jwt.auth')->group(function () {
     Route::apiResource('schedule', 'ScheduleController');
 
     Route::apiResource('payment-method', 'PaymentController');
+    Route::apiResource('agreement', 'AgreementController');
 });
 
 Route::post('login', 'AuthController@login');
