@@ -32,4 +32,8 @@ class Product extends Model
     public function schedule() {
         return $this->hasOne('App\Models\Scheduling');
     }
+
+    public function orders() {
+        return $this->belongsToMany('App\Models\Order', 'order_product');
+    }
 }

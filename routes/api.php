@@ -43,6 +43,7 @@ Route::prefix('v1')->middleware('jwt.auth')->group(function () {
 
     Route::apiResource('payment-method', 'PaymentController');
     Route::apiResource('agreement', 'AgreementController');
+    Route::apiResource('order', 'OrderController');
 });
 
 Route::post('login', 'AuthController@login');
