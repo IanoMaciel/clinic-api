@@ -46,6 +46,9 @@ class ScheduleController extends Controller
             ]);
         }
 
+        // order by date_time ascending
+        $query->orderBy('date_time', 'asc');
+
         $schedule = $query->paginate(10);
         return response()->json($schedule, 200);
     }
