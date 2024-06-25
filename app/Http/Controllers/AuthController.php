@@ -21,12 +21,18 @@ class AuthController extends Controller {
             ]);
         }
 
-        $cookie = cookie('jwt', $token, 60 * 24); // 1 day
+//        $cookie = cookie('jwt', $token, 60 * 24); // 1 day
+//
+//        return response([
+//            'message' => 'success',
+//            Response::HTTP_OK
+//        ])->withCookie($cookie);
 
-        return response([
-            'message' => 'success',
-            Response::HTTP_OK
-        ])->withCookie($cookie);
+        return response()->json([
+            'token' => $token,
+            'status' => Response::HTTP_OK
+        ]);
+
     }
 
     public function logout() {
