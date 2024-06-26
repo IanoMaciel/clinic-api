@@ -17,8 +17,20 @@ class HistoryController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(): \Illuminate\Http\JsonResponse {
-        $histories = $this->history->query()->with('customer')->paginate(10);
+    public function index(Request $request): \Illuminate\Http\JsonResponse {
+        $query = $this->history->query()->with('customer');
+
+        if ($request->has('search')) {
+            $search = $request->get('search');
+            // Adiciona um filtro para buscar pelo nome completo ou CPF do paciente na tabela 'customers'
+            $query->whereHas('customer', function($q) use ($search) {
+                $q->where('customers.full_name', 'LIKE', "%{$search}%")
+                    ->orWhere('customers.cpf', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $histories = $query->paginate(10);
+
         return response()->json($histories, 200);
     }
 
@@ -49,7 +61,7 @@ class HistoryController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function show($id): \Illuminate\Http\JsonResponse {
-        $history = $this->history->query()->find($id);
+        $history = $this->history->query()->with('customer')->find($id);
         if (!$history) return response()->json(['error' => 'History not found'], 404);
         return response()->json($history, 200);
     }
