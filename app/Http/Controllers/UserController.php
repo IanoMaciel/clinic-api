@@ -87,17 +87,22 @@ class UserController extends Controller {
         $user = $this->user->query()->find($id);
         if (!$user) return response()->json(['error' => 'User not found', 404]);
 
-        // 3 - inícia o método de atualização de registro do usuário
-        // verifica se o email fornecido já existe para outro user no banco de dados
+        // 3 - verifica se o email fornecido já existe para outro user no banco de dados
         $email = $request->get('email');
         $emailExists = $this->user->query()->where('email', $email)->where('id', '<>', $id)->exists();
 
         if ($emailExists) return response()->json(['message' => 'There is already a customer with this address email'], 400);
 
-        // 4 - se tudo deu certo, atualiza o usuário.
+        // 4 - se o campo password está presente, criptografa a senha
+        if ($request->has('password')) {
+            $request->merge(['password' => bcrypt($request->get('password'))]);
+        }
+
+        // 5 - atualiza o usuário com os dados do request
         $user->update($request->all());
         return response()->json($user, 200);
     }
+
 
     /**
      * Remove the specified resource from storage.
