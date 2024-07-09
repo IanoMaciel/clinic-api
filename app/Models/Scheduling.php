@@ -16,11 +16,11 @@ class Scheduling extends Model
         'description'
     ];
 
-    public function rules () {
+    public function rules ($update = false) {
         return [
             'customer_id' => 'required|exists:customers,id',
             'product_id' => 'required|exists:products,id',
-            'date_time' => 'required|date_format:Y-m-d H:i:s|after:now',
+            'date_time' => $update ? 'nullable|date_format:Y-m-d H:i:s|after:now' : 'required|date_format:Y-m-d H:i:s|after:now',
             'description' => 'nullable|string'
         ];
     }

@@ -120,23 +120,26 @@ class ScheduleController extends Controller
         }
 
         # verifica os campos recebido pelo request body
-        $request->validate($this->schedule->rules());
+        $request->validate($this->schedule->rules(true));
 
-        # verifica se a data é válida
-        $dateTime = Carbon::parse($request->get('date_time'));
-        if ($dateTime->isPast()) {
-            return response()->json(['error' => 'Connot schedule in the past'], 400);
+        if ($request->has('date_time')) {
+            # verifica se a data é válida
+            $dateTime = Carbon::parse($request->get('date_time'));
+            if ($dateTime->isPast()) {
+                return response()->json(['error' => 'Cannot schedule in the past'], 400);
+            }
+
+            # verifica se horário já está ocupado
+            $existingSchedule = $this->schedule->query()->where('date_time', $dateTime)->first();
+            if ($existingSchedule && $existingSchedule->id != $id) {
+                return response()->json(['error' => 'Time slot already taken'], 400);
+            }
         }
-
-        # verifica se horário já está ocupado
-        $existingSchedule = $this->schedule->query()->where('date_time', $dateTime)->first();
-        if ($existingSchedule) {
-            return response()->json(['error' => 'Time slot already token'], 400);
-        }
-
         $schedule->update($request->all());
         return response()->json($schedule, 201);
     }
+
+
 
     /**
      * Remove the specified resource from storage.
