@@ -14,6 +14,14 @@ class ProductController extends Controller {
     }
 
     /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function findAll() {
+        $products = $this->product->query()->get();
+        return response()->json($products, 200);
+    }
+
+    /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
