@@ -20,13 +20,25 @@ class Customer extends Model {
     public function rules() {
         return [
             'full_name' => 'required|string|min:3|max:100',
-            'cpf' => 'required|cpf|formato_cpf',
-            'birth_date' => 'required|date|before_or_equal:today',
-            'phone_primary' => 'required|string|celular_com_ddd',
-            'phone_secondary' => 'string|celular_com_ddd',
-            'email' => 'email|unique:customers,email'
+            'cpf' => 'required|cpf|formato_cpf|unique:customers,cpf',
+            'birth_date' => 'nullable|date|before_or_equal:today',
+            'phone_primary' => 'nullable|string|celular_com_ddd',
+            'phone_secondary' => 'nullable|string|celular_com_ddd',
+            'email' => 'nullable|email|unique:customers,email'
         ];
     }
+# Obs: o cliente pediu para remover as validações e deixar apenas o cpf válido
+
+//    public function rules() {
+//        return [
+//            'full_name' => 'required|string|min:3|max:100',
+//            'cpf' => 'required|cpf|formato_cpf',
+//            'birth_date' => 'required|date|before_or_equal:today',
+//            'phone_primary' => 'required|string|celular_com_ddd',
+//            'phone_secondary' => 'string|celular_com_ddd',
+//            'email' => 'email|unique:customers,email'
+//        ];
+//    }
 
     // relationship -> hasMany with address
     public function address()
