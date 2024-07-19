@@ -29,7 +29,8 @@ class HistoryController extends Controller {
             });
         }
 
-        $histories = $query->paginate(10);
+        $per_page = $request->get('per_page', 10);
+        $histories = $query->paginate($per_page);
 
         return response()->json($histories, 200);
     }
