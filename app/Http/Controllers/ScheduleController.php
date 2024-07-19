@@ -49,7 +49,9 @@ class ScheduleController extends Controller
         // order by date_time ascending
         $query->orderBy('date_time', 'asc');
 
-        $schedule = $query->paginate(10);
+        $per_page = $request->get('per_page', 10);
+        $schedule = $query->paginate($per_page);
+
         return response()->json($schedule, 200);
     }
 
