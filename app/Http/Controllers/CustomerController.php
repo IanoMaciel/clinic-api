@@ -49,7 +49,8 @@ class CustomerController extends Controller {
         }
 
         // Obtém os resultados paginados
-        $customers = $query->orderBy('full_name')->paginate(10);
+        $per_page = $request->get('per_page', 10);
+        $customers = $query->orderBy('full_name')->paginate($per_page);
 
         // Retorna os resultados em formato JSON
         return response()->json($customers, 200);
