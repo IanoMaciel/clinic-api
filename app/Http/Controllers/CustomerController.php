@@ -190,11 +190,13 @@ class CustomerController extends Controller {
             return response()->json(['message' => 'There is already a customer with this CPF number'], 400);
         }
 
-        // verifica se o email fornecido já eixste para outro cliente no banco de dados
-        $emailExists = $this->customer->where('email', $email)->where('id', '<>', $id)->exists();
+        if($email != null) {
+            // verifica se o email fornecido já eixste para outro cliente no banco de dados
+            $emailExists = $this->customer->where('email', $email)->where('id', '<>', $id)->exists();
 
-        if ($emailExists) {
-            return response()->json(['message' => 'There is already a customer with this address email'], 400);
+            if ($emailExists) {
+                return response()->json(['message' => 'There is already a customer with this address email'], 400);
+            }
         }
 
         $customer->update($request->all());
