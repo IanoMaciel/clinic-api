@@ -14,6 +14,14 @@ class ProductController extends Controller {
     }
 
     /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function findAll() {
+        $products = $this->product->query()->get();
+        return response()->json($products, 200);
+    }
+
+    /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -24,8 +32,9 @@ class ProductController extends Controller {
             $search = $request->get('search');
             $query->where('name', 'like', '%' . $search . '%');
         }
-
-        $products = $query->paginate(10);
+        
+        $per_page = $request->get('per_page', 10);
+        $products = $query->paginate($per_page);
 
         return response()->json($products, 200);
     }
