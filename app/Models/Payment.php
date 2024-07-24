@@ -15,4 +15,9 @@ class Payment extends Model
             'payment_method' => 'required|string|max:50',
         ];
     }
+
+    // relationship
+    public function Order () {
+        return $this->hasOne('App\Models\Order');
+    }
 }

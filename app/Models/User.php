@@ -39,6 +39,11 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
+    // relationship
+    public function order () {
+        return $this->hasOne('App\Models\Order');
+    }
+
     /**
      * The attributes that should be hidden for arrays.
      *
