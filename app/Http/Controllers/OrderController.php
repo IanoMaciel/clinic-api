@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
-use App\Models\Product;
 use App\Models\Order;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,9 +18,19 @@ class OrderController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
+    public function index(Request $request) {
+        $query = $this->order->query()->with([
+            'customer:id,full_name,cpf',
+            'user:id,first_name,last_name',
+            'agreement:id,agreement',
+            'payment:id,payment_method',
+            'products:id,name,value'
+        ]);
+
+        $per_page = $request->get('per_page', 10);
+        $histories = $query->paginate($per_page);
+
+        return response()->json($histories, 200);
     }
 
     /**
@@ -32,14 +40,25 @@ class OrderController extends Controller {
      * @return JsonResponse
      */
     public function store(Request $request) {
-        $request->validate($this->order->rules());
+        $request->validate($this->order->rules(), $this->order->feedback());
 
+        //$discount = $request->all('discount') ? $request->all('discount') : null;
+        $discount = $request->input('discount', null);
+
+        // create order
         $order = $this->order->create($request->all());
         $order->products()->attach($request->products);
+
+        $total = $order->products->sum(function ($product) {
+            return $product->value;
+        });
+
+        if($discount) $total -= $discount;
 
         return response()->json([
             'message' => 'Order created successfully!',
             'order' => $order->load('products'),
+            'total' => $total,
         ]);
     }
 
