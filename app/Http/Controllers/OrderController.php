@@ -16,7 +16,7 @@ class OrderController extends Controller {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function index(Request $request) {
         $query = $this->order->query()->with([
@@ -42,10 +42,9 @@ class OrderController extends Controller {
     public function store(Request $request) {
         $request->validate($this->order->rules(), $this->order->feedback());
 
-        //$discount = $request->all('discount') ? $request->all('discount') : null;
         $discount = $request->input('discount', null);
 
-        // create order
+        // cria orders
         $order = $this->order->create($request->all());
         $order->products()->attach($request->products);
 
@@ -55,22 +54,22 @@ class OrderController extends Controller {
 
         if($discount) $total -= $discount;
 
+        // atualiza a order adicionado o valor do total;
+        $order->total = $total;
+        $order->save();
+
         return response()->json([
             'message' => 'Order created successfully!',
             'order' => $order->load('products'),
-            'total' => $total,
         ]);
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function show(Order $order)
-    {
-        //
+    public function show($id) {
+//        $order = $this->order->
     }
 
     /**
