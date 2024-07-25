@@ -12,7 +12,8 @@ class Order extends Model {
         'user_id',
         'agreement_id',
         'payment_id',
-        'discount'
+        'discount',
+        'total'
     ];
 
     public function rules() {
@@ -24,7 +25,8 @@ class Order extends Model {
             'user_id' => 'required|exists:users,id',
             'agreement_id' => 'nullable|exists:agreements,id',
             'payment_id' => 'required|exists:payments,id',
-            'discount' => 'nullable|numeric'
+            'discount' => 'nullable|numeric',
+            'total' => 'nullable|numeric'
         ];
     }
 
@@ -42,6 +44,7 @@ class Order extends Model {
             'payment_id.required' => 'O campo do pagamento é obrigatório.',
             'payment_id.exists' => 'O pagamento selecionado não existe.',
             'discount.numeric' => 'O desconto deve ser um campo numérico.',
+            'total.numeric' => 'O total deve ser um campo numérico'
         ];
     }
 

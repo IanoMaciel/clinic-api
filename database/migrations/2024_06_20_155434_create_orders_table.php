@@ -21,6 +21,7 @@ class CreateOrdersTable extends Migration
             $table->foreignId('agreement_id')->nullable()->references('id')->on('agreements')->onDelete('cascade');
             $table->foreignId('payment_id')->references('id')->on('payments')->onDelete('cascade');
             $table->decimal('discount', 10, 2)->nullable();
+            $table->decimal('total', 10, 2)->nullable();
 
             $table->timestamps();
         });
