@@ -111,11 +111,28 @@ class OrderController extends Controller {
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Order $order)
-    {
-        //
+     * * @param Integer $id
+     * * @return JsonResponse
+    */
+    public function destroy($id): JsonResponse {
+        try {
+            $idAdmin = auth()->user();
+            $admin = $idAdmin->getAttribute('is_admin');
+
+            if (!$admin) return response()->json(['error' => 'Unauthorized'], 401);
+
+            $order = $this->order->query()->find($id);
+
+            if (!$order) return response()->json(['error' => 'Order not found'], 404);
+
+            $order->delete();
+            return response()->json(null, 204);
+
+        } catch (\Exception $error) {
+            return response()->json([
+                'message' => 'Error processing request',
+                'error' => $error->getMessage()
+            ], 500);
+        }
     }
 }
