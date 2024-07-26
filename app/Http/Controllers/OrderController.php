@@ -48,35 +48,28 @@ class OrderController extends Controller {
      * @return JsonResponse
      */
     public function store(Request $request): JsonResponse {
-        try {
-            $request->validate($this->order->rules(), $this->order->feedback());
+        $request->validate($this->order->rules(), $this->order->feedback());
 
-            $discount = $request->input('discount', null);
+        $discount = $request->input('discount', null);
 
-            // create a new order
-            $order = $this->order->create($request->all());
-            $order->products()->attach($request->products);
+        // create a new order
+        $order = $this->order->create($request->all());
+        $order->products()->attach($request->products);
 
-            $total = $order->products->sum(function ($product) {
-                return $product->value;
-            });
+        $total = $order->products->sum(function ($product) {
+            return $product->value;
+        });
 
-            if($discount) $total -= $discount;
+        if($discount) $total -= $discount;
 
-            // update order with total vaçue
-            $order->total = $total;
-            $order->save();
+        // update order with total vaçue
+        $order->total = $total;
+        $order->save();
 
-            return response()->json([
-                'message' => 'Order created successfully!',
-                'order' => $order->load('products'),
-            ]);
-        } catch (\Exception $error) {
-            return response()->json([
-                'message' => 'Error processing request',
-                'error' => $error->getMessage()
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'Order created successfully!',
+            'order' => $order->load('products'),
+        ]);
     }
 
     /**
