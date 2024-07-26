@@ -19,18 +19,29 @@ class OrderController extends Controller {
      * @return JsonResponse
      */
     public function index(Request $request) {
-        $query = $this->order->query()->with([
-            'customer:id,full_name,cpf',
-            'user:id,first_name,last_name',
-            'agreement:id,agreement',
-            'payment:id,payment_method',
-            'products:id,name,value'
-        ]);
+        try {
+            $query = $this->order->query()->with(['customer', 'user', 'agreement', 'payment', 'products']);
 
-        $per_page = $request->get('per_page', 10);
-        $histories = $query->paginate($per_page);
+            // Filtragem
+            if ($request->has('search')) {
+                $search = $request->get('search');
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('customer', function ($q) use ($search) {
+                        $q->where('full_name', 'like', '%' . $search . '%');
+                    })->orWhere('id', $search); // Filtrar por id do pedido
+                });
+            }
 
-        return response()->json($histories, 200);
+            $per_page = $request->get('per_page', 10);
+            $histories = $query->paginate($per_page);
+
+            return response()->json($histories, 200);
+        } catch (\Exception $error) {
+            return response()->json([
+                'message' => 'Error processing request',
+                'error' => $error->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -40,28 +51,35 @@ class OrderController extends Controller {
      * @return JsonResponse
      */
     public function store(Request $request) {
-        $request->validate($this->order->rules(), $this->order->feedback());
+        try {
+            $request->validate($this->order->rules(), $this->order->feedback());
 
-        $discount = $request->input('discount', null);
+            $discount = $request->input('discount', null);
 
-        // cria orders
-        $order = $this->order->create($request->all());
-        $order->products()->attach($request->products);
+            // create a new order
+            $order = $this->order->create($request->all());
+            $order->products()->attach($request->products);
 
-        $total = $order->products->sum(function ($product) {
-            return $product->value;
-        });
+            $total = $order->products->sum(function ($product) {
+                return $product->value;
+            });
 
-        if($discount) $total -= $discount;
+            if($discount) $total -= $discount;
 
-        // atualiza a order adicionado o valor do total;
-        $order->total = $total;
-        $order->save();
+            // update order with total vaçue
+            $order->total = $total;
+            $order->save();
 
-        return response()->json([
-            'message' => 'Order created successfully!',
-            'order' => $order->load('products'),
-        ]);
+            return response()->json([
+                'message' => 'Order created successfully!',
+                'order' => $order->load('products'),
+            ]);
+        } catch (\Exception $error) {
+            return response()->json([
+                'message' => 'Error processing request',
+                'error' => $error->getMessage()
+            ], 500);
+        }
     }
 
     /**
