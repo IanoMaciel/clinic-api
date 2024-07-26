@@ -14,11 +14,10 @@ class OrderController extends Controller {
     }
 
     /**
-     * Display a listing of the resource.
-     *
+     * @param Request $request
      * @return JsonResponse
      */
-    public function index(Request $request) {
+    public function index(Request $request): JsonResponse {
         try {
             $query = $this->order->query()->with(['customer', 'user', 'agreement', 'payment', 'products']);
 
@@ -45,12 +44,10 @@ class OrderController extends Controller {
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
      * @param  Request  $request
      * @return JsonResponse
      */
-    public function store(Request $request) {
+    public function store(Request $request): JsonResponse {
         try {
             $request->validate($this->order->rules(), $this->order->feedback());
 
@@ -83,34 +80,32 @@ class OrderController extends Controller {
     }
 
     /**
-     * Display the specified resource.
-     * @return \Illuminate\Http\Response
+     * @param Integer $id
+     * @return JsonResponse
      */
-    public function show($id) {
-//        $order = $this->order->
+    public function show($id): JsonResponse {
+        try {
+            $order = $this->order->query()->find($id);
+
+            if (!$order) return response()->json(['error' => 'Order not found'], 404);
+
+            return response()->json($order, 200);
+        } catch (\Exception $error) {
+            return response()->json([
+                'message' => 'Error processing request',
+                'error' => $error->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Order $order)
-    {
-        //
-    }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Order  $order
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @param  Integer $id
+     * @return JsonResponse
      */
-    public function update(Request $request, Order $order)
-    {
-        //
+    public function update(Request $request, $id): JsonResponse {
+        return response()->json();
     }
 
     /**
