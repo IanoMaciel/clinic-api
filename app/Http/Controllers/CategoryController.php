@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Ramsey\Uuid\Type\Integer;
 
 class CategoryController extends Controller {
 
@@ -51,37 +52,27 @@ class CategoryController extends Controller {
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Category $category)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Category $category)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
+     * @param  Integer $id
+     * @return JsonResponse
      */
-    public function update(Request $request, Category $category)
-    {
-        //
+    public function update(Request $request, $id): JsonResponse {
+        $request->validate($this->category->rules(), $this->category->feedback());
+
+        $category = $this->category->query()->find($id);
+        if (!$category) return response()->json(['message' => 'Category not found'], 404);
+
+        try {
+            $category->update($request->all());
+            return response()->json($category, 201);
+        } catch (\Exception $error) {
+            return response()->json([
+                'message' => 'Error processing request',
+                'error' => $error->getMessage()
+            ], 500);
+        }
     }
 
     /**
