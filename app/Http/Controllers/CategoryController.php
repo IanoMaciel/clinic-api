@@ -20,7 +20,15 @@ class CategoryController extends Controller {
      * @return JsonResponse
      */
     public function index(): JsonResponse {
-        //
+        try {
+            $categories = $this->category->query()->get();
+            return response()->json($categories, 200);
+        } catch (\Exception $error) {
+            return response()->json([
+                'message' => 'Error processing request',
+                'error' => $error->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -29,7 +37,7 @@ class CategoryController extends Controller {
      * @param Request  $request
      * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse{
+    public function store(Request $request): JsonResponse {
         $request->validate($this->category->rules(), $this->category->feedback());
         try {
             $category = $this->category->query()->create($request->all());
