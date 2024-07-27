@@ -78,11 +78,21 @@ class CategoryController extends Controller {
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
+     * @param  Integer $id
+     * @return JsonResponse
      */
-    public function destroy(Category $category)
-    {
-        //
+    public function destroy($id): JsonResponse {
+        $category = $this->category->find($id);
+        if (!$category) return response()->json(['message' => 'Category not found'], 404);
+
+        try {
+            $category->delete();
+            return response()->json(null, 204);
+        } catch (\Exception $error) {
+            return response()->json([
+                'message' => 'Error processing request',
+                'error' => $error->getMessage()
+            ], 500);
+        }
     }
 }
