@@ -71,23 +71,13 @@ class InventoryController extends Controller {
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Inventory  $inventory
-     * @return \Illuminate\Http\Response
+     * @param  Integer $id
+     * @return JsonResponse
      */
-    public function show(Inventory $inventory)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Inventory  $inventory
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Inventory $inventory)
-    {
-        //
+    public function show($id): JsonResponse {
+        $inventory = $this->inventory->find($id);
+        if (!$inventory) response()->json(['Inventory not found'], 404);
+        return response()->json($inventory, 200);
     }
 
     /**
@@ -97,7 +87,7 @@ class InventoryController extends Controller {
      * @param  \App\Models\Inventory  $inventory
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Inventory $inventory)
+    public function update(Request $request, $id)
     {
         //
     }
