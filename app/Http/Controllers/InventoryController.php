@@ -125,11 +125,25 @@ class InventoryController extends Controller {
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Inventory  $inventory
-     * @return \Illuminate\Http\Response
+     * @param  int $id
+     * @return JsonResponse
      */
-    public function destroy(Inventory $inventory)
-    {
-        //
+    public function destroy(int $id): JsonResponse {
+        $inventory = $this->inventory->find($id);
+
+        if (!$inventory) {
+            return response()->json(['error' => 'Inventory not found'], 404);
+        }
+
+        try {
+            $inventory->delete();
+            return response()->json(null, 204);
+        } catch (\Exception $error) {
+            return response()->json([
+                'message' => 'Error processing request',
+                'error' => $error->getMessage()
+            ], 500);
+        }
     }
+
 }
