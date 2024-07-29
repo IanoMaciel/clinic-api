@@ -6,6 +6,7 @@ use App\Models\Inventory;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Psy\Util\Json;
 
 class InventoryController extends Controller {
     protected $inventory;
@@ -83,13 +84,42 @@ class InventoryController extends Controller {
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Inventory  $inventory
-     * @return \Illuminate\Http\Response
+     * @param  Request $request
+     * @param  Integer $id
+     * @return JsonResponse
      */
-    public function update(Request $request, $id)
-    {
-        //
+    public function update(Request $request, $id): JsonResponse {
+        $request->validate($this->inventory->rules(), $this->inventory->feedback());
+
+        $inventory = $this->inventory->find($id);
+        if (!$inventory) response()->json(['Inventory not found'], 404);
+
+        $originalCategoryId = $inventory->category_id; // Supondo que `category_id` é a coluna que armazena a categoria atual
+        $newCategoryId = $request->get('category_id');
+
+        $reference = null;
+        if ($newCategoryId) {
+            $category = Category::find($newCategoryId);
+            if ($category) {
+                $hash = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+                $reference = $category->category . '_' . $hash;
+            }
+        }
+
+        // Atualiza o registro
+        try {
+            $inventory->fill($request->all());
+            if ($originalCategoryId != $newCategoryId && $reference) {
+                $inventory->reference = $reference;
+            }
+            $inventory->save();
+            return response()->json($inventory, 200); // Código 200 é mais apropriado para sucesso
+        } catch (\Exception $error) {
+            return response()->json([
+                'message' => 'Error processing request',
+                'error' => $error->getMessage()
+            ], 500);
+        }
     }
 
     /**
