@@ -21,7 +21,7 @@ class InventoryController extends Controller {
      * @return JsonResponse
      */
     public function index(Request $request): JsonResponse {
-        $query = $this->inventory->query();
+        $query = $this->inventory->query()->with('category');
 
         // filter
         if ($request->has('search')) {
@@ -76,7 +76,7 @@ class InventoryController extends Controller {
      * @return JsonResponse
      */
     public function show($id): JsonResponse {
-        $inventory = $this->inventory->find($id);
+        $inventory = $this->inventory->with('category')->find($id);
         if (!$inventory) response()->json(['Inventory not found'], 404);
         return response()->json($inventory, 200);
     }
