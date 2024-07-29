@@ -78,7 +78,7 @@ class OrderController extends Controller {
      */
     public function show($id): JsonResponse {
         try {
-            $order = $this->order->query()->find($id);
+            $order = $this->order->query()->with(['customer', 'user', 'agreement', 'payment', 'products'])->find($id);
 
             if (!$order) return response()->json(['error' => 'Order not found'], 404);
 
