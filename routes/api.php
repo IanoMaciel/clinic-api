@@ -41,6 +41,9 @@ Route::prefix('v1')->middleware('jwt.auth')->group(function () {
     Route::apiResource('product', 'ProductController');
     Route::get('findAll', 'ProductController@findAll');
 
+    Route::apiResource('inventory', 'InventoryController');
+    Route::apiResource('category', 'CategoryController');
+
     Route::apiResource('history', 'HistoryController');
     Route::apiResource('schedule', 'ScheduleController');
 
