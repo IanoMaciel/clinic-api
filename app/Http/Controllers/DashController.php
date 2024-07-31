@@ -33,4 +33,11 @@ class DashController extends Controller {
         return response()->json(['totalCustomers' => $total], 200);
     }
 
+    public function totalServices(): JsonResponse {
+        $services = $this->product->all();
+        $total = $services->count();
+
+        return response()->json(['totalServices' => $total], 200);
+    }
+
 }
