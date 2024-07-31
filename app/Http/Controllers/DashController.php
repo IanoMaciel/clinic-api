@@ -56,4 +56,11 @@ class DashController extends Controller {
         return response()->json(['totalServices' => $total], 200);
     }
 
+    /**
+     * @return JsonResponse
+     */
+    public function allSchedulings(): JsonResponse {
+       $schedulings = $this->scheduling->all();
+       return response()->json($schedulings, 200);
+    }
 }

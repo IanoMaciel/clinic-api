@@ -55,6 +55,7 @@ Route::prefix('v1')->middleware('jwt.auth')->group(function () {
     Route::get('gains', 'DashController@gains');
     Route::get('total-customers', 'DashController@totalCustomers');
     Route::get('total-services', 'DashController@totalServices');
+    Route::get('all-schedulings', 'DashController@allSchedulings');
 });
 
 Route::post('login', 'AuthController@login');
