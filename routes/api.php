@@ -52,7 +52,9 @@ Route::prefix('v1')->middleware('jwt.auth')->group(function () {
     Route::apiResource('order', 'OrderController');
 
     // dashboard
+    Route::get('gains', 'DashController@gains');
     Route::get('total-customers', 'DashController@totalCustomers');
+    Route::get('total-services', 'DashController@totalServices');
 });
 
 Route::post('login', 'AuthController@login');

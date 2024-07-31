@@ -26,6 +26,22 @@ class DashController extends Controller {
     /**
      * @return JsonResponse
      */
+    public function gains(Request $request): JsonResponse {
+        // get year and month
+        $year = date('Y');
+        $month = date('m');
+
+        // filter by current month and year
+        $totalGains = $this->order->whereYear('created_at', $year)->whereMonth('created_at', $month)->sum('total');
+
+        return response()->json([
+            'totalGains' => $totalGains
+        ]);
+    }
+
+    /**
+     * @return JsonResponse
+     */
     public function totalCustomers(): JsonResponse {
         $customers = $this->customer->all();
         $total = $customers->count();
