@@ -17,4 +17,9 @@ class Agreement extends Model
         ];
     }
 
+    // relationship
+    public function Order () {
+        return $this->hasOne('App\Models\Order');
+    }
+
 }

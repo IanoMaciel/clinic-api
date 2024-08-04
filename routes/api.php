@@ -41,12 +41,21 @@ Route::prefix('v1')->middleware('jwt.auth')->group(function () {
     Route::apiResource('product', 'ProductController');
     Route::get('findAll', 'ProductController@findAll');
 
+    Route::apiResource('inventory', 'InventoryController');
+    Route::apiResource('category', 'CategoryController');
+
     Route::apiResource('history', 'HistoryController');
     Route::apiResource('schedule', 'ScheduleController');
 
     Route::apiResource('payment-method', 'PaymentController');
     Route::apiResource('agreement', 'AgreementController');
     Route::apiResource('order', 'OrderController');
+
+    // dashboard
+    Route::get('gains', 'DashController@gains');
+    Route::get('total-customers', 'DashController@totalCustomers');
+    Route::get('total-services', 'DashController@totalServices');
+    Route::get('all-schedulings', 'DashController@allSchedulings');
 });
 
 Route::post('login', 'AuthController@login');
