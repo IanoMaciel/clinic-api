@@ -13,7 +13,8 @@ class Scheduling extends Model
         'customer_id',
         'product_id',
         'date_time',
-        'description'
+        'description',
+        'status',
     ];
 
     public function rules ($update = false) {
@@ -21,7 +22,8 @@ class Scheduling extends Model
             'customer_id' => 'required|exists:customers,id',
             'product_id' => 'required|exists:products,id',
             'date_time' => $update ? 'nullable|date_format:Y-m-d H:i:s|after:now' : 'required|date_format:Y-m-d H:i:s|after:now',
-            'description' => 'nullable|string'
+            'description' => 'nullable|string',
+            'status' => 'nullable|in:CONFIRMED,CANCELED,COMPLETED,RESCHEDULED,NO SHOW'
         ];
     }
 
