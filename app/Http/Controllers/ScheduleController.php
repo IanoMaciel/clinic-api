@@ -46,8 +46,7 @@ class ScheduleController extends Controller
             ]);
         }
 
-        if ($request->has('status')) {
-            $status = $request->get('status');
+        if ($status = $request->input('status')) {
             $query->where('status', 'like', '%' . $status . '%');
         }
 
