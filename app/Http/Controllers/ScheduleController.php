@@ -46,6 +46,11 @@ class ScheduleController extends Controller
             ]);
         }
 
+        if ($request->has('status')) {
+            $status = $request->get('status');
+            $query->where('status', 'like', '%' . $status . '%');
+        }
+
         // order by date_time ascending
         $query->orderBy('date_time', 'asc');
 
