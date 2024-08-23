@@ -34,26 +34,18 @@ class CustomerController extends Controller {
     public function index(Request $request) {
         $query = $this->customer->query()->with('address'); // Inicializa a consulta
 
-        if ($request->has('search')) {
-            $search = $request->get('search');
+        if ($search = $request->input('search')) {
             $query->where(function($q) use ($search) {
                 $q->where('full_name', 'like', '%' . $search . '%')
                     ->orWhere('cpf', 'like', '%' . $search . '%');
             });
         }
 
-
-        if ($request->has('attributes')) {
-            $attributes = $request->get('attributes');
-            $query->selectRaw($attributes);
-        }
-
-        // Obtém os resultados paginados
-        //$customers = $query->orderBy('full_name')->paginate(10);
-        $customers = $query->orderBy('id')->paginate(10);
+        $per_page = $request->get('per_page', 10);
+        $customers = $query->orderBy('id')->paginate($per_page);
 
         // Retorna os resultados em formato JSON
-        return response()->json($customers, 200);
+        return response()->json($customers);
     }
 
     /**
