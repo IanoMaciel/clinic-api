@@ -36,7 +36,7 @@ class InventoryController extends Controller {
         $per_page = $request->get('per_page', 10);
         $inventory = $query->paginate($per_page);
 
-        return response()->json($inventory, 200);
+        return response()->json($inventory);
     }
 
     /**
@@ -78,7 +78,7 @@ class InventoryController extends Controller {
     public function show($id): JsonResponse {
         $inventory = $this->inventory->with('category')->find($id);
         if (!$inventory) response()->json(['Inventory not found'], 404);
-        return response()->json($inventory, 200);
+        return response()->json($inventory);
     }
 
     /**
@@ -113,7 +113,7 @@ class InventoryController extends Controller {
                 $inventory->reference = $reference;
             }
             $inventory->save();
-            return response()->json($inventory, 200); // Código 200 é mais apropriado para sucesso
+            return response()->json($inventory); // Código 200 é mais apropriado para sucesso
         } catch (\Exception $error) {
             return response()->json([
                 'message' => 'Error processing request',
@@ -145,5 +145,4 @@ class InventoryController extends Controller {
             ], 500);
         }
     }
-
 }
