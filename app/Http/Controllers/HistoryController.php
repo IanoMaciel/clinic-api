@@ -2,57 +2,71 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\History;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class HistoryController extends Controller {
     protected $history;
-    public function __construct(History $history) {
+    protected $customer;
+
+    public function __construct(History $history, Customer $customer) {
         $this->history = $history;
+        $this->customer = $customer;
     }
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function index(Request $request): \Illuminate\Http\JsonResponse {
-        $query = $this->history->query()->with('customer');
+    public function index(Request $request): JsonResponse {
+        // Obtenha todos os IDs de clientes associados às histórias
+        $historyCustomerIds = $this->history->query()->distinct()->pluck('customer_id');
 
-        if ($request->has('search')) {
-            $search = $request->get('search');
-            // Adiciona um filtro para buscar pelo nome completo ou CPF do paciente na tabela 'customers'
-            $query->whereHas('customer', function($q) use ($search) {
-                $q->where('customers.full_name', 'LIKE', "%{$search}%")
-                    ->orWhere('customers.cpf', 'LIKE', "%{$search}%");
+        // Filtre os clientes com base nesses IDs
+        $query =  $this->customer->query()->whereIn('id', $historyCustomerIds);
+
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('full_name', 'like', '%' . $search . '%')
+                    ->orWhere('cpf', 'like', '%' . $search . '%');
             });
         }
 
         $per_page = $request->get('per_page', 10);
-        $histories = $query->paginate($per_page);
+        $customers = $query->paginate($per_page);
 
-        return response()->json($histories, 200);
+        return response()->json($customers);
     }
 
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function store(Request $request) {
-        $request->validate($this->history->rules());
-        $image = $request->file('history');
-        $image_urn = $image->store('images', 'public');
+    public function store(Request $request): JsonResponse {
+        $request->validate($this->history->rules(), $this->history->feedbacks());
 
-        $history = $this->history->create([
-            'customer_id' => $request->get('customer_id'),
-            'history' => $image_urn,
-        ]);
+        $histories = [];
+        if ($request->hasFile('history')) {
+            foreach ($request->file('history') as $file) {
+                $image_urn = $file->store('images', 'public');
 
-        return response()->json($history, 201);
+                // Cria uma entrada de histórico para cada arquivo
+                $history = $this->history->query()->create([
+                    'customer_id' => $request->get('customer_id'),
+                    'date_attachment' => $request->get('date_attachment'),
+                    'history' => $image_urn,
+                ]);
+
+                $histories[] = $history;
+            }
+        }
+
+        return response()->json($histories, 201);
     }
 
     /**
@@ -61,49 +75,42 @@ class HistoryController extends Controller {
      * @param Integer $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id): \Illuminate\Http\JsonResponse {
+    public function show($id): JsonResponse {
         $history = $this->history->query()->with('customer')->find($id);
         if (!$history) return response()->json(['error' => 'History not found'], 404);
-        return response()->json($history, 200);
+        return response()->json($history);
     }
 
     /**
-     * Regra de Negócio: somente ususário admin deverá atualizar
-     * o histórico de paciente
-     *
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param Integer $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
      */
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id): JsonResponse {
         $history = $this->history->query()->find($id);
 
-        if (!$history) return response()->json(['error' => 'History not found', 404]);
+        if (!$history) return response()->json(['error' => 'History not found'], 404);
 
         if ($request->file('history')) Storage::disk('public')->delete($history->get('history'));
 
         $image = $request->file('history');
         $image_urn = $image->store('images', 'public');
 
-
         $history->update([
             'customer_id' => $request->get('customer_id'),
             'history' => $image_urn,
+            'date_attachment' => $request->get('date_attachment'),
         ]);
 
-
-//        if (!$history)
+        return response()->json($history);
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param Integer $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
      */
-    public function destroy(Request $request, $id): \Illuminate\Http\JsonResponse {
+    public function destroy(Request $request, $id): JsonResponse{
         $history = $this->history->query()->find($id);
 
         if (!$history) return response()->json(['error' => 'History not found'], 404);
@@ -113,6 +120,6 @@ class HistoryController extends Controller {
         // remove o arquivo antigo caso um novo arquivo tenha sido enviado no request
         $history->delete();
 
-        return response()->json(['message' => 'History successfully removed'], 200);
+        return response()->json(null,204);
     }
 }

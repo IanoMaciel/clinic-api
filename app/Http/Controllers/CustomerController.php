@@ -80,8 +80,8 @@ class CustomerController extends Controller {
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function store(Request $request) {
-        $request->validate($this->customer->rules());
-        $customer = $this->customer->create($request->all());
+        $request->validate($this->customer->rules(), $this->customer->feedbacks());
+        $customer = $this->customer->query()->create($request->all());
         return response()->json($customer, 201);
     }
 
@@ -192,7 +192,7 @@ class CustomerController extends Controller {
         }
 
         $customer->update($request->all());
-        return response()->json($customer, 200);
+        return response()->json($customer);
     }
 
     /**
