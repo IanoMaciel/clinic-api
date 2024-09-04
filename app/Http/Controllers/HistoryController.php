@@ -18,6 +18,23 @@ class HistoryController extends Controller {
     }
 
     /**
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function findById(Request $request, int $id): JsonResponse {
+        $customer = $this->customer->query()->find($id);
+        if (!$customer) return response()->json(['error' => 'Usuário inválido'], 404);
+
+        $histories = $this->history->query()
+            ->where('customer_id', $id)
+            ->orderBy('date_attachment', 'desc')
+            ->get();
+
+        return response()->json($histories);
+    }
+
+    /**
      * Display a listing of the resource.
      * @param Request $request
      * @return JsonResponse

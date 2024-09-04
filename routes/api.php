@@ -45,6 +45,8 @@ Route::prefix('v1')->middleware('jwt.auth')->group(function () {
     Route::apiResource('category', 'CategoryController');
 
     Route::apiResource('history', 'HistoryController');
+    Route::get('history-attachments/{id}', 'HistoryController@findById');
+
     Route::apiResource('schedule', 'ScheduleController');
 
     Route::apiResource('payment-method', 'PaymentController');
