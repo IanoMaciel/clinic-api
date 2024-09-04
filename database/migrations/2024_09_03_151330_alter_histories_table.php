@@ -12,7 +12,7 @@ class AlterHistoriesTable extends Migration  {
      */
     public function up() {
         Schema::table('histories', function (Blueprint $table) {
-            $table->date('date_attachment');
+            $table->date('date_attachment')->nullable();
         });
     }
 
