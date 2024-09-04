@@ -23,7 +23,7 @@ class Address extends Model
 
     public function rules() {
         return [
-            'customer_id' => 'required:customers,id',
+            'customer_id' => 'required|exists:customers,id',
             'cep' => 'required|string|formato_cep',
             'uf' => 'required|string|uf',
             'city' => 'required|string',
@@ -32,6 +32,20 @@ class Address extends Model
             'neighborhood' => 'required|string',
             'complement' => 'nullable|string',
             'reference' => 'nullable|string',
+        ];
+    }
+
+    public function feedbacks() {
+        return [
+            'customer_id.required' => 'O campo cliente é obrigatório.',
+            'customer_id.exists' => 'O cliente selecionado é inválido.',
+            'cep.required' => 'O campo CEP é obrigatório.',
+            'cep.formato_cep' => 'O formato do CEP é inválido.',
+            'uf.required' => 'O campo UF é obrigatório.',
+            'uf.uf' => 'O campo UF deve ser válido.',
+            'city.required' => 'O campo cidade é obrigatório.',
+            'street.required' => 'O campo rua é obrigatório.',
+            'neighborhood.required' => 'O campo bairro é obrigatório.',
         ];
     }
 
