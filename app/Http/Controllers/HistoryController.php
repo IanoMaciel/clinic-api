@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\History;
+use http\Env\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -104,23 +105,40 @@ class HistoryController extends Controller {
      * @return JsonResponse
      */
     public function update(Request $request, $id): JsonResponse {
+        // Busca o registro do histórico pelo ID
         $history = $this->history->query()->find($id);
 
-        if (!$history) return response()->json(['error' => 'History not found'], 404);
+        // Verifica se o histórico foi encontrado
+        if (!$history) {
+            return response()->json(['error' => 'History not found'], 404);
+        }
 
-        if ($request->file('history')) Storage::disk('public')->delete($history->get('history'));
+        // Verifica se um novo arquivo foi enviado no request
+        if ($request->hasFile('history')) {
+            // Deleta o arquivo antigo, se existir
+            if ($history->history) {
+                Storage::disk('public')->delete($history->history);
+            }
 
-        $image = $request->file('history');
-        $image_urn = $image->store('images', 'public');
+            // Armazena o novo arquivo e atualiza o caminho no banco
+            $image = $request->file('history');
+            $image_urn = $image->store('images', 'public');
 
-        $history->update([
-            'customer_id' => $request->get('customer_id'),
-            'history' => $image_urn,
-            'date_attachment' => $request->get('date_attachment'),
-        ]);
+            // Atualiza o campo 'history' com o novo caminho
+            $history->history = $image_urn;
+        }
 
+        // Atualiza os outros campos do registro
+        $history->customer_id = $request->get('customer_id');
+        $history->date_attachment = $request->get('date_attachment');
+
+        // Salva as alterações no banco de dados
+        $history->save();
+
+        // Retorna o histórico atualizado como resposta JSON
         return response()->json($history);
     }
+
 
     /**
      * @param Request $request

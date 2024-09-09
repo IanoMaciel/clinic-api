@@ -15,7 +15,7 @@ class History extends Model
         'date_attachment'
     ];
 
-    public function rules() {
+    public function rules($update = false) {
         return [
             'customer_id' => 'required|exists:customers,id',
             'history' => 'required|array',
